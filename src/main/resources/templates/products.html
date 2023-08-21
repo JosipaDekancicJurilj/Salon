@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Prikaz svih usluga</title>
+</head>
+<body layout:fragment="content">
+<div class="row">
+  <div class="col d-flex justify-content-between align-items-center">
+    <h1>Sve usluge</h1>
+    <button data-toggle="tooltip" data-placement="top" title="Dodaj proizvod" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addArticle"><i class="fa-solid fa-plus"></i></button>
+  </div>
+</div>
+<table class="table table-striped table-bordered">
+  <tr>
+    <td style="width: 10%">ID</td>
+    <td>Naziv</td>
+    <td>Opis</td>
+    <td>Cijena</td>
+    <td>Jedinica</td>
+    <td>Slika</td>
+    <td style="width: 10%">Akcije</td>
+  </tr>
+  <tr th:each="article: ${articles}">
+    <td th:text="${article.getId()}"></td>
+    <td th:text="${article.getName()}"></td>
+    <td th:text="${article.getDescription()}"></td>
+    <td th:text="${article.getPrice()}"></td>
+    <td th:text="${article.getUnit()}"></td>
+    <td><a th:href="${article.getImage()}" th:text="${article.getImage()}"></a></td>
+    <td class="d-flex align-items-center justify-content-center">
+      <div class="btn-group" role="group">
+        <a data-toggle="tooltip" data-placement="top" title="Briši artikal" class="btn btn-sm btn-danger" th:href="@{/article/delete/{id}(id=${article.getId()})}"><i class="fa-solid fa-eraser"></i></a>
+        <a data-toggle="tooltip" data-placement="top" title="Uredi artikal" class="btn btn-sm btn-secondary" th:href="@{/article/edit/{id}(id=${article.getId()})}"><i class="fa-solid fa-pen-to-square"></i></a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+
+<div class="modal fade" id="addArticle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nova usluga</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form th:object="${article}" th:action="@{/article/add}" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <label class="col-form-label">Unesite naziv usluge:</label>
+          <input class="form-control" th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" th:field="*{name}">
+          <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback"></div>
+
+          <label class="col-form-label">Unesite opis usluge:</label>
+          <input class="form-control" th:classappend="${#fields.hasErrors('description') ? 'is-invalid' : ''}" type="text" th:field="*{description}">
+          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="invalid-feedback"></div>
+
+          <label class="col-form-label">Unesite cijenu usluge:</label>
+          <input class="form-control" th:classappend="${#fields.hasErrors('price') ? 'is-invalid' : ''}" type="number" th:field="*{price}" step=".05">
+          <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="invalid-feedback"></div>
+
+          <label class="col-form-label">Unesite jedinicu proizvoda:</label>
+          <input class="form-control" th:classappend="${#fields.hasErrors('unit') ? 'is-invalid' : ''}" type="text" th:field="*{unit}">
+          <div th:if="${#fields.hasErrors('unit')}" th:errors="*{unit}" class="invalid-feedback"></div>
+
+          <label class="col-form-label">Odaberite sliku usluge:</label>
+          <input class="form-control" th:classappend="${#fields.hasErrors('image') ? 'is-invalid' : ''}" type="file" name="file">
+          <div th:if="${#fields.hasErrors('image')}" th:errors="*{image}" class="invalid-feedback"></div>
+
+          <label class="col-form-label">Odaberite uslugu proizvoda</label>
+          <select class="form-control" th:classappend="${#fields.hasErrors('service') ? 'is-invalid' : ''}"  th:field="*{service}">
+            <option value="">Odaberite uslugu</option>
+            <option th:each="service : ${cservices}" th:value="${service.id}" th:text="${service.name}"></option>
+          </select>
+          <div th:if="${#fields.hasErrors('service')}" th:errors="*{service}" class="invalid-feedback"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+          <button type="submit" class="btn btn-primary">Dodaj proizvod</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+<script type="text/javascript" th:if="${added}">
+  $(function () {
+    $('#addArticle').modal("show");
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Uređivanje usluga</title>
+</head>
+<body layout:fragment="content">
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h4>Uređivanje usluge</h4>
+      <form th:object="${service}" th:action="@{/service/edit/{id}(id=${service.getId()})}" method="POST">
+
+        <label class="col-form-label">Unesite naziv usluge:</label>
+        <input class="form-control" th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" th:field="*{name}">
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback"></div>
+
+        <label class="col-form-label">Odaberite naduslugu</label>
+        <select class="form-control" th:field="*{parent}">
+          <option value="">Odaberite uslugu</option>
+          <option th:each="service : ${services}" th:value="${service.id}" th:text="${service.name}"></option>
+        </select>
+
+        <button type="submit" class="btn btn-primary mt-5">Uredi</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
